@@ -1,0 +1,50 @@
+---
+version: '3'
+
+volumes:
+  grafana-storage:
+    driver: local
+  prometheus-storage:
+    driver: local
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports: 
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus:/config
+      - prometheus-storage:/prometheus
+    restart: unless-stopped
+    networks: 
+      - nascanet
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    restart: unless-stopped
+    networks: 
+      - nascanet
+
+  ping_exporter:
+    image: czerwonk/ping_exporter
+    container_name: ping_exporter
+    ports:
+      - 9427:9427
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./ping_exporter:/config
+    restart: unless-stopped
+    networks: 
+      - nascanet
+
+networks:
+  nascanet:
+    driver: bridge
+    name: nascanet

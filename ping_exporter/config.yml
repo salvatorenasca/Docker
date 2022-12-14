@@ -1,0 +1,13 @@
+targets:
+  - 8.8.8.8 # prod server
+  - 1.1.1.1 # Helsinki (Cloudflare datacenter)
+
+dns:
+  refresh: 2m15s
+
+ping:
+  interval: 2s
+  timeout: 3s
+  history-size: 42
+  payload-size: 120
+
